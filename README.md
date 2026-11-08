@@ -20,10 +20,66 @@ student **Teams** submit milestone work and receive **Supervisor** feedback, bui
 
 ## Setup, build, test
 
-> To be added with the Sprint 1 code scaffold. Will cover: dependencies, `.env.example`
-> (`DATABASE_URL`, `JWT_SECRET`, `UNIVERSITY_EMAIL_DOMAIN`, …), database migration + seed, and the
-> run/build/test commands. Synthetic demo data only; demo passwords are provided via a private handoff,
-> never committed.
+### 1. Prerequisites
+- **Node.js** >= 20.x
+- **PostgreSQL** running locally on port 5432 (or configured via `DATABASE_URL`)
+
+### 2. Environment Configuration
+Copy `.env.example` to `.env`:
+```bash
+cp .env.example .env
+```
+Default configuration values:
+- `DATABASE_URL="postgresql://postgres:postgres@localhost:5432/cpms?schema=public"`
+- `JWT_SECRET="cpms-super-secret-development-key-change-in-production"`
+- `JWT_EXPIRES_IN="8h"`
+- `COOKIE_SECURE="false"`
+- `UNIVERSITY_EMAIL_DOMAIN="student.university.ac.th"`
+- `PORT=8080`
+
+### 3. Install Dependencies
+```bash
+npm install
+```
+
+### 4. Database Migration & Seed
+Run Prisma migrations and populate seed data:
+```bash
+npx prisma migrate dev
+npm run prisma:seed
+```
+
+#### Demo Seeded Accounts (Local Handoff)
+All seeded demo accounts use the standard demo password `password123`:
+
+| Role | Name | Email | Associated Team / Project |
+|------|------|-------|---------------------------|
+| **Supervisor** | Prof. Somchai | `prof.somchai@university.ac.th` | Team Alpha (Course Project Management System) |
+| **Supervisor** | Dr. Ann | `dr.ann@university.ac.th` | Team Beta (Smart Campus Transit) |
+| **Student** | Alice Wong (STU001) | `alice@student.university.ac.th` | Team Alpha |
+| **Student** | Bob Smith (STU002) | `bob@student.university.ac.th` | Team Alpha |
+| **Student** | Charlie Brown (STU003) | `charlie@student.university.ac.th` | Team Beta |
+| **Student (Invited)** | Dave Miller (STU004) | `dave@student.university.ac.th` | Unactivated (no password, for BR-15) |
+
+### 5. Running the Application
+To run both backend and frontend concurrently in development mode:
+```bash
+npm run dev
+```
+- Frontend UI: `http://localhost:3000` (or `http://localhost:8080` in production)
+- Backend REST API: `http://localhost:8080/api`
+
+To build and start production server:
+```bash
+npm run build
+npm run start
+```
+
+### 6. Running Automated Tests
+Run unit and integration test suites:
+```bash
+npm test
+```
 
 ## Release
 
