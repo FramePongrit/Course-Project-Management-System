@@ -76,9 +76,14 @@ npm run start
 ```
 
 ### 6. Running Automated Tests
-Run unit and integration test suites:
+Run unit and API integration test suites (Vitest + Supertest):
 ```bash
 npm test
+```
+
+Run UI / End-to-End test journeys (Playwright):
+```bash
+npm run test:e2e
 ```
 
 ## Release

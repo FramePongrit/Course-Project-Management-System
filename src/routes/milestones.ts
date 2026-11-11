@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { z } from "zod";
-import { PrismaClient, Role } from "@prisma/client";
+import { Prisma, PrismaClient, Role } from "@prisma/client";
 import { Clock } from "../lib/clock";
 import {
   NotFoundError,
@@ -180,32 +180,56 @@ export function createMilestonesRouter(prisma: PrismaClient, clock: Clock) {
         },
       });
 
+      const data = {
+        title: parsed.title.trim(),
+        description: parsed.description.trim(),
+        link: parsed.link.trim(),
+      };
+
       let submission;
-      if (!existingSubmission) {
-        submission = await prisma.submission.create({
-          data: {
-            milestoneId: milestone.id,
-            teamId,
-            title: parsed.title.trim(),
-            description: parsed.description.trim(),
-            link: parsed.link.trim(),
-            firstSubmittedById: user.id,
-            firstSubmittedAt: now,
-            lastUpdatedById: user.id,
-            lastUpdatedAt: now,
-          },
-        });
-      } else {
-        submission = await prisma.submission.update({
-          where: { id: existingSubmission.id },
-          data: {
-            title: parsed.title.trim(),
-            description: parsed.description.trim(),
-            link: parsed.link.trim(),
-            lastUpdatedById: user.id,
-            lastUpdatedAt: now,
-          },
-        });
+      try {
+        submission = existingSubmission
+          ? await prisma.submission.update({
+              where: { id: existingSubmission.id },
+              data: {
+                ...data,
+                lastUpdatedById: user.id,
+                lastUpdatedAt: now,
+              },
+            })
+          : await prisma.submission.create({
+              data: {
+                milestoneId: milestone.id,
+                teamId,
+                ...data,
+                firstSubmittedById: user.id,
+                firstSubmittedAt: now,
+                lastUpdatedById: user.id,
+                lastUpdatedAt: now,
+              },
+            });
+      } catch (e) {
+        if (
+          e instanceof Prisma.PrismaClientKnownRequestError &&
+          e.code === "P2002"
+        ) {
+          // lost a concurrent first-submit race → treat as an overwrite
+          submission = await prisma.submission.update({
+            where: {
+              milestoneId_teamId: {
+                milestoneId: milestone.id,
+                teamId,
+              },
+            },
+            data: {
+              ...data,
+              lastUpdatedById: user.id,
+              lastUpdatedAt: now,
+            },
+          });
+        } else {
+          throw e;
+        }
       }
 
       return res.status(200).json({

@@ -32,10 +32,11 @@ export function createAuthRouter(prisma: PrismaClient, jwtSecret: string, cookie
         throw new UnauthenticatedError("Invalid email or password");
       }
 
+      const expiresIn = (process.env.JWT_EXPIRES_IN || "8h") as jwt.SignOptions["expiresIn"];
       const token = jwt.sign(
         { sub: user.id, role: user.role },
         jwtSecret,
-        { expiresIn: "8h" }
+        { expiresIn }
       );
 
       res.cookie("session", token, {

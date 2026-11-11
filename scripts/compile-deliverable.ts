@@ -61,3 +61,4 @@ for (const item of filesToInclude) {
 const outputPath = path.join(rootDir, "docs/DELIVERABLE-1-CONSOLIDATED.md");
 fs.writeFileSync(outputPath, fullDocument, "utf-8");
 console.log(`Successfully compiled Deliverable 1 document into ${outputPath}`);
+

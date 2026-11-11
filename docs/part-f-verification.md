@@ -42,8 +42,9 @@ npm install
 npx prisma migrate dev
 npm run prisma:seed
 
-# 5. Run automated tests (Unit & Integration)
+# 5. Run automated tests (Unit, API Integration, and UI/E2E)
 npm test
+npm run test:e2e
 
 # 6. Start development server (API: 8080, UI: 3000)
 npm run dev
@@ -66,6 +67,7 @@ All demo accounts use synthetic data with local demo password `password123`:
 
 ## 3. Automated Test Execution Results
 
+### 3.1 Unit and API Integration Tests
 **Command Executed:**
 ```bash
 npm test (npx vitest run)
@@ -75,20 +77,35 @@ npm test (npx vitest run)
 ```text
  RUN  v2.1.9 C:/Users/PC'M/Desktop/Course Project Management System
 
- ✓ tests/unit/rules.test.ts (3 tests) 3ms
- ✓ tests/unit/status.test.ts (6 tests) 4ms
- ✓ tests/unit/auth.test.ts (1 test) 182ms
- ✓ tests/api/milestones.test.ts (6 tests) 352ms
- ✓ tests/api/auth.test.ts (9 tests) 427ms
- ✓ tests/api/feedback.test.ts (7 tests) 431ms
- ✓ tests/api/progress.test.ts (5 tests) 436ms
- ✓ tests/api/submissions.test.ts (12 tests) 583ms
+ ✓ tests/unit/rules.test.ts (3 tests) 5ms
+ ✓ tests/unit/status.test.ts (6 tests) 5ms
+ ✓ tests/unit/auth.test.ts (1 test) 304ms
+ ✓ tests/api/milestones.test.ts (6 tests) 795ms
+ ✓ tests/api/auth.test.ts (9 tests) 824ms
+ ✓ tests/api/progress.test.ts (5 tests) 832ms
+ ✓ tests/api/feedback.test.ts (7 tests) 896ms
+ ✓ tests/api/submissions.test.ts (12 tests) 1109ms
 
  Test Files  8 passed (8)
       Tests  49 passed (49)
    Failures  0
     Skipped  0
-   Duration  1.37s
+```
+
+### 3.2 UI / End-to-End (E2E) Critical Journeys (Playwright)
+**Command Executed:**
+```bash
+npm run test:e2e (npm run build:client && playwright test)
+```
+
+**Execution Output:**
+```text
+Running 2 tests using 1 worker
+
+  ok 1 tests\e2e\sprint1.spec.ts:48:3 › Sprint 1 UI / E2E Critical Journeys › TEST-E2E-01: Student logs in -> submits a Milestone -> reloads and sees the persisted Submission (AC-05-01, AC-05-09, AC-08-01) (1.2s)
+  ok 2 tests\e2e\sprint1.spec.ts:96:3 › Sprint 1 UI / E2E Critical Journeys › TEST-E2E-02: Supervisor logs in -> records Feedback on a submitted Milestone -> status shows Completed (AC-06-01, AC-07-04) (908ms)
+
+  2 passed (4.8s)
 ```
 
 ---
@@ -149,6 +166,8 @@ All 100% of planned Sprint 1 Acceptance Criteria are verified by executed automa
 | | AC-08-02 | Assigned supervisor views same progress | TEST-08-02 | `tests/api/progress.test.ts` > TEST-08-02 | ✅ PASS |
 | | AC-08-03 | No numeric percentage/score (EX-05) | TEST-08-03 | `tests/api/progress.test.ts` > TEST-08-03 | ✅ PASS |
 | | AC-08-04 | Cross-scope progress access returns 404 | TEST-08-04 | `tests/api/progress.test.ts` > TEST-08-04 | ✅ PASS |
+| **UI / E2E** | AC-05-01, AC-05-09, AC-08-01 | Student logs in -> submits -> reloads and sees persisted Submission | TEST-E2E-01 | `tests/e2e/sprint1.spec.ts` > TEST-E2E-01 | ✅ PASS |
+| **UI / E2E** | AC-06-01, AC-07-04 | Supervisor logs in -> records Feedback -> status shows Completed | TEST-E2E-02 | `tests/e2e/sprint1.spec.ts` > TEST-E2E-02 | ✅ PASS |
 
 ---
 

@@ -103,20 +103,7 @@ export function createProjectsRouter(prisma: PrismaClient, clock: Clock) {
       const user = req.user!;
       const project = await prisma.project.findUnique({
         where: { id: req.params.id },
-        include: {
-          team: true,
-          milestones: {
-            orderBy: { deadline: "asc" },
-            include: {
-              submissions: {
-                where: { teamId: { equals: undefined } }, // placeholder to be assigned
-              },
-              feedbacks: {
-                where: { teamId: { equals: undefined } },
-              },
-            },
-          },
-        },
+        include: { team: true },
       });
 
       if (!project) {

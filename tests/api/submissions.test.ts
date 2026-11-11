@@ -161,7 +161,7 @@ describe("F-05 Submission API Tests (BR-01, BR-02, BR-07, BR-20, NFR-08, NFR-10)
   });
 
   // TEST-05-05
-  it("TEST-05-05: concurrent first-submits -> both succeed or one row guaranteed (AC-05-05, BR-02)", async () => {
+  it("TEST-05-05: concurrent first-submits -> both succeed (200) and one row guaranteed (AC-05-05, BR-02)", async () => {
     const project1 = await prisma.project.findFirst({
       where: { name: "Course Project Management System" },
     });
@@ -194,8 +194,8 @@ describe("F-05 Submission API Tests (BR-01, BR-02, BR-07, BR-20, NFR-08, NFR-10)
       });
 
     const [res1, res2] = await Promise.all([p1, p2]);
-    expect([200, 201]).toContain(res1.status);
-    expect([200, 201]).toContain(res2.status);
+    expect(res1.status).toBe(200);
+    expect(res2.status).toBe(200);
 
     const count = await prisma.submission.count({
       where: { milestoneId: concurrentMs.id },
