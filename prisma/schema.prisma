@@ -1,0 +1,124 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  STUDENT
+  SUPERVISOR
+}
+
+enum UserStatus {
+  ACTIVE
+  INVITED
+}
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  passwordHash String?
+  name         String
+  role         Role
+  status       UserStatus @default(ACTIVE)
+  studentId    String?    @unique
+  createdAt    DateTime   @default(now())
+
+  membership          Membership?
+  supervisedTeams     Team[]       @relation("SupervisorTeams")
+  createdMilestones   Milestone[]  @relation("CreatedMilestones")
+  firstSubmissions    Submission[] @relation("FirstSubmittedBy")
+  updatedSubmissions  Submission[] @relation("LastUpdatedBy")
+  recordedFeedbacks   Feedback[]   @relation("RecordedFeedbacks")
+}
+
+model Team {
+  id           String   @id @default(cuid())
+  name         String   @unique
+  supervisorId String
+  supervisor   User     @relation("SupervisorTeams", fields: [supervisorId], references: [id], onDelete: Restrict)
+  createdAt    DateTime @default(now())
+
+  memberships  Membership[]
+  project      Project?
+  submissions  Submission[]
+  feedbacks    Feedback[]
+}
+
+model Membership {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  teamId    String
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Restrict)
+  createdAt DateTime @default(now())
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  teamId      String   @unique
+  team        Team     @relation(fields: [teamId], references: [id], onDelete: Restrict)
+  createdAt   DateTime @default(now())
+
+  milestones  Milestone[]
+}
+
+model Milestone {
+  id          String   @id @default(cuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  name        String
+  description String
+  deadline    DateTime
+  createdById String
+  createdBy   User     @relation("CreatedMilestones", fields: [createdById], references: [id], onDelete: Restrict)
+  createdAt   DateTime @default(now())
+
+  submissions Submission[]
+  feedbacks   Feedback[]
+
+  @@unique([projectId, name])
+}
+
+model Submission {
+  id                 String   @id @default(cuid())
+  milestoneId        String
+  milestone          Milestone @relation(fields: [milestoneId], references: [id], onDelete: Restrict)
+  teamId             String
+  team               Team      @relation(fields: [teamId], references: [id], onDelete: Restrict)
+  title              String
+  description        String
+  link               String
+  firstSubmittedById String
+  firstSubmittedBy   User      @relation("FirstSubmittedBy", fields: [firstSubmittedById], references: [id], onDelete: Restrict)
+  firstSubmittedAt   DateTime  @default(now())
+  lastUpdatedById    String
+  lastUpdatedBy      User      @relation("LastUpdatedBy", fields: [lastUpdatedById], references: [id], onDelete: Restrict)
+  lastUpdatedAt      DateTime  @default(now())
+
+  feedbacks          Feedback[]
+
+  @@unique([milestoneId, teamId])
+}
+
+model Feedback {
+  id           String     @id @default(cuid())
+  milestoneId  String
+  milestone    Milestone  @relation(fields: [milestoneId], references: [id], onDelete: Restrict)
+  teamId       String
+  team         Team       @relation(fields: [teamId], references: [id], onDelete: Restrict)
+  submissionId String
+  submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Restrict)
+  text         String
+  recordedById String
+  recordedBy   User       @relation("RecordedFeedbacks", fields: [recordedById], references: [id], onDelete: Restrict)
+  recordedAt   DateTime   @default(now())
+
+  @@unique([milestoneId, teamId])
+}
+
