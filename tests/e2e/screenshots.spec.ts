@@ -71,6 +71,9 @@ test("Capture Deliverable 1 Part F screenshots", async ({ browser }) => {
   await shot(alice, "01-login.png");
   await alice.click('button[type="submit"]');
   await expect(alice).toHaveURL(`${baseUrl}/dashboard`);
+  await expect(
+    alice.locator("h1.title", { hasText: "Course Project Management System" })
+  ).toBeVisible();
   await shot(alice, "02-student-dashboard.png");
 
   await alice.goto(`${baseUrl}/milestones/${demo.id}`);
@@ -93,8 +96,14 @@ test("Capture Deliverable 1 Part F screenshots", async ({ browser }) => {
   await login(sup, "prof.somchai@university.ac.th");
   await sup.click('button[type="submit"]');
   await expect(sup).toHaveURL(`${baseUrl}/projects`);
+  await expect(
+    sup.locator(".card", { hasText: "Course Project Management System" })
+  ).toBeVisible();
   await shot(sup, "06-supervisor-projects.png");
   await sup.goto(`${baseUrl}/projects/${project!.id}`);
+  await expect(
+    sup.locator("h1.title", { hasText: "Course Project Management System" })
+  ).toBeVisible();
   await shot(sup, "07-supervisor-project-detail.png");
   await sup.goto(`${baseUrl}/supervisor/milestones/${demo.id}`);
   await expect(sup.getByText("Sprint 1 Vertical Slice")).toBeVisible();
