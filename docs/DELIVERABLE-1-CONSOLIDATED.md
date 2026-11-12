@@ -1443,7 +1443,7 @@ states (including the past-deadline Missed/Awaiting cases); no percentage/score;
 | **Student 1** | Supanut Watthanasimakorn (GitHub: `@Beethoven190`) |
 | **Student 2** | Pongrit Frame (GitHub: `@FramePongrit`) |
 | **Release Branch & Tag** | `main` / `v1.0.0-sprint1` |
-| **Assessed Commit** | `ac04070` (Feature Branch) & release merge commit |
+| **Assessed Release** | Tag `v1.0.0-sprint1` on `main` via release PR #4 (`sprint-01 → main`); exact merge commit recorded at release (`<MERGE_COMMIT>`) |
 
 ---
 
@@ -1673,37 +1673,72 @@ it("TEST-04-04: student attempts to create milestone -> 403 FORBIDDEN (AC-04-04)
 
 ---
 
-## 6. Program Demonstrations & Walkthrough (For Report Screenshots)
+## 6. Program Demonstrations (Screenshots)
 
-### Scenario 1: Complete Normal Domain Journey
-- **Role:** Student (`alice@student.university.ac.th`) & Supervisor (`prof.somchai@university.ac.th`)
-- **Steps:**
-  1. Student Alice logs in &rarr; views Team Alpha's Project Dashboard.
-  2. Alice opens Milestone "Sprint 2 Core Expansion", fills form (title, description, link) &rarr; clicks Submit.
-  3. Submission saves successfully; UI shows "Last saved at ... (ICT)".
-  4. Alice reloads page &rarr; persisted submission is retrieved from PostgreSQL.
-  5. Milestone status transitions from `Open` to `Submitted`.
-  6. Supervisor Prof. Somchai logs in &rarr; views Milestone &rarr; records Feedback.
-  7. Status transitions to `Completed`.
+Captured automatically via Playwright (`npm run screenshots` — see `docs/screenshots/README.md`); each image is a real render of the running application against the seeded PostgreSQL database. Backend/API proof for the protected operations is additionally given by the automated test excerpts (§5) and the AC matrix (§4): a UI screenshot alone does not establish backend authorization.
 
-### Scenario 2: Business Rule & Cutoff Rejection
-- **Role:** Student (`alice@student.university.ac.th`)
-- **Steps:**
-  1. Alice opens past-deadline Milestone "Sprint 0 Proposal" (deadline passed).
-  2. UI displays red banner: *"The deadline for this milestone has passed. Submissions are no longer accepted (Cutoff passed)."*
-  3. Form inputs are completely disabled.
-  4. If an external client attempts `PUT /api/milestones/:id/submission`, server rejects with `422 CUTOFF_PASSED`.
+### Scenario 1 — Normal domain journey + persisted retrieval
+Student `alice@student.university.ac.th` logs in and submits milestone work; supervisor `prof.somchai@university.ac.th` records feedback. Status transitions Open → Submitted → Completed and the saved data survives a page reload.
 
-### Scenario 3: Authorization & Role Rejection
-- **Role:** Student (`charlie@student.university.ac.th`, Team Beta) & Unauthenticated
-- **Steps:**
-  1. Unauthenticated request to `/api/projects` &rarr; returns `401 UNAUTHENTICATED` without leaking project names.
-  2. Charlie (Team Beta) attempts to view or submit to Team Alpha's Milestone &rarr; returns `404 NOT_FOUND` (no data disclosure).
-  3. Alice (Student) attempts `POST /api/projects/:id/milestones` &rarr; returns `403 FORBIDDEN` (role protection).
+![S1.1 — Login screen (F-01)](screenshots/01-login.png)
+
+![S1.2 — Student dashboard: milestones with derived status (AC-08-01)](screenshots/02-student-dashboard.png)
+
+![S1.3 — Submission form, status Open (AC-05-01)](screenshots/03-milestone-submit-form.png)
+
+![S1.4 — Submission saved, status → Submitted (AC-05-01)](screenshots/04-submission-saved.png)
+
+![S1.5 — After reload: submission retrieved from the database (AC-05-09)](screenshots/05-submission-persisted-after-reload.png)
+
+![S1.6 — Supervisor assigned-projects list (FR-10)](screenshots/06-supervisor-projects.png)
+
+![S1.7 — Supervisor project detail: milestones (AC-08-02)](screenshots/07-supervisor-project-detail.png)
+
+![S1.8 — Read-only submission + feedback form (AC-06-01)](screenshots/08-supervisor-feedback-form.png)
+
+![S1.9 — Feedback recorded, status → Completed (AC-06-01, AC-07-04)](screenshots/09-feedback-recorded-completed.png)
+
+![S1.10 — Student reload: feedback visible, Completed persisted (AC-06-07)](screenshots/10-student-sees-feedback.png)
+
+### Scenario 2 — Business-rule / cutoff rejection (BR-01)
+A student opens a past-deadline milestone: the form is disabled and the cutoff banner is shown. An external `PUT …/submission` is rejected with `422 CUTOFF_PASSED` (asserted by TEST-05-03).
+
+![S2 — Past-deadline milestone: cutoff banner + disabled form (AC-05-03, BR-01)](screenshots/11-cutoff-rejection.png)
+
+### Scenario 3 — Authorization & ownership
+![S3.1 — Cross-team access: Charlie (Team Beta) → 404, no data leak (AC-02-02, AC-05-06)](screenshots/12-authz-cross-team-404.png)
+
+![S3.2 — Unauthenticated access → redirected to login (AC-02-01, NFR-01)](screenshots/13-authz-unauth-redirect-login.png)
+
+Server-side enforcement (403 role / 404 ownership / 401 unauthenticated) is proven at the API level by TEST-02-01..06, TEST-04-04, and TEST-05-06/07 (see §4 and §5).
 
 ---
 
-## 7. Contribution Table & AI-Use Declaration
+## 7. Git Workflow, Issues & Review Evidence
+
+Sprint 1 followed the course workflow: **Issue → feature branch (off `sprint-01` staging) → teammate-reviewed PR → integration → reviewed release PR to `main`.**
+
+### Issues → feature branch → PR → integration
+| Issue | Scope | Feature branch | PR | Reviewer | Merged into |
+|-------|-------|----------------|----|----------|-------------|
+| **#1** Authentication, Authorization Guards & Seed Data | F-01, F-02, F-03 | `01-authentication` | **PR #3** | @FramePongrit | `sprint-01` |
+| **#2** Milestones, Submissions, Feedback & Progress Slice | F-04–F-08 | `01-authentication` | **PR #3** | @FramePongrit | `sprint-01` |
+
+### Substantive review — PR #3
+- **Author:** @Beethoven190 · **Reviewer:** @FramePongrit (authors do not approve their own PR).
+- **Sequence:** review **COMMENTED** with specific findings → author pushed fixes → review **APPROVED** → merged into `sprint-01` (2026-11-11).
+- **Findings raised and resolved:**
+  1. Concurrent first-submit not atomic (race returned 409 instead of 200) → caught Prisma `P2002` and retried as update; `TEST-05-05` tightened to assert `200/200`.
+  2. Dead code in the progress endpoint (unused `teamId: undefined` include) → removed.
+  3. Missing UI/E2E tests and overstated coverage → added Playwright `TEST-E2E-01/02`; Part F coverage corrected.
+  4. `JWT_EXPIRES_IN` not read from env → wired.
+
+### Reviewed release to `main`
+**Release PR #4** (`sprint-01 → main`) promotes the integrated increment and is tagged **`v1.0.0-sprint1`** on the merge commit on `main`.
+
+---
+
+## 8. Contribution Table & AI-Use Declaration
 
 ### Contribution Table
 | Student | Role & Responsibilities | Deliverables |
@@ -1716,7 +1751,7 @@ AI assistant (Antigravity) was utilized as a pair-programming partner to scaffol
 
 ---
 
-## 8. Known Limitations & Next Steps for Sprint 2
+## 9. Known Limitations & Next Steps for Sprint 2
 - **Single Offering:** System models exactly one course offering (per EX-01).
 - **Seeded Accounts in Sprint 1:** Account registration and team creation are introduced in Sprint 2 via Supervisor Invitations (F-09, F-10, F-11).
 - **Submission History:** Sprint 1 maintains single current submission per milestone; numbered immutable revisions (F-14) will be added in Sprint 2 via additive migration M2.
