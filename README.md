@@ -88,6 +88,17 @@ Run UI / End-to-End test journeys (Playwright):
 npm run test:e2e
 ```
 
+### 7. Running with Docker
+Build and run the database, migration/seed job and app in containers. Only a `.env` made from
+`.env.example` is needed; set `JWT_SECRET` to a random value first (the container runs with
+`NODE_ENV=production` and refuses to start without one):
+```bash
+cp .env.example .env      # then edit JWT_SECRET and the placeholder passwords
+docker compose up --build
+```
+Open `http://localhost:8080`. Data is kept in the `postgres_data` volume across
+`docker compose down` / `up`; `docker compose down -v` deletes it.
+
 ## Release
 
 Sprint 1 target: `v1.0.0-sprint1` on `main`. Docker/CI-CD/GCP deployment is established in Lab 5.
