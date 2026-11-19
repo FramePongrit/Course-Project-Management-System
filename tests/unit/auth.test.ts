@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 describe("F-01: Authentication & Password Security (BR-15, NFR-03)", () => {
   // TEST-01-09
   it("TEST-01-09: bcrypt hashing cost >= 10, stored value != plaintext, compare works (AC-01-08, NFR-03)", async () => {
-    const plainPassword = "password123";
+    const plainPassword = "unit-test-password";
     const cost = 10;
     const hash = await bcrypt.hash(plainPassword, cost);
 

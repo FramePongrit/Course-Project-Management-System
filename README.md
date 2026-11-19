@@ -29,17 +29,14 @@ Copy `.env.example` to `.env`:
 ```bash
 cp .env.example .env
 ```
-Default configuration values:
-- `DATABASE_URL="postgresql://postgres:postgres@localhost:5432/cpms?schema=public"`
-- `JWT_SECRET="cpms-super-secret-development-key-change-in-production"`
-- `JWT_EXPIRES_IN="8h"`
-- `COOKIE_SECURE="false"`
-- `UNIVERSITY_EMAIL_DOMAIN="student.university.ac.th"`
-- `PORT=8080`
+Every variable is documented in [.env.example](.env.example) (placeholders only) and in the
+variable table of [docs/labs/lab-05/deployment.md](docs/labs/lab-05/deployment.md). Set at least
+`DATABASE_URL` and `DEMO_USER_PASSWORD` (choose any local value). Never commit `.env`.
 
 ### 3. Install Dependencies
 ```bash
 npm install
+npx prisma generate
 ```
 
 ### 4. Database Migration & Seed
@@ -49,8 +46,13 @@ npx prisma migrate dev
 npm run prisma:seed
 ```
 
+The seed is **safe by default**: if the database already has users it does nothing, so it can run on
+every deploy without erasing data. To wipe and reseed a **local** database, run it with
+`SEED_RESET=true` (never in the cloud).
+
 #### Demo Seeded Accounts (Local Handoff)
-All seeded demo accounts use the standard demo password `password123`:
+All seeded demo accounts use the password in your `DEMO_USER_PASSWORD` environment variable. The
+password is never stored in the code; share the cloud value with testers privately.
 
 | Role | Name | Email | Associated Team / Project |
 |------|------|-------|---------------------------|

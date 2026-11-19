@@ -2,6 +2,7 @@ import { describe, it, expect, beforeAll } from "vitest";
 import request from "supertest";
 import { PrismaClient, Role, UserStatus } from "@prisma/client";
 import { createApp } from "../../src/app";
+import { DEMO_PASSWORD } from "../helpers/demo";
 
 describe("F-01 Authentication & F-02 Authorization API Tests", () => {
   const prisma = new PrismaClient();
@@ -11,7 +12,7 @@ describe("F-01 Authentication & F-02 Authorization API Tests", () => {
   it("TEST-01-01: seeded ACTIVE student logs in with correct credentials -> 200 + cookie (AC-01-01)", async () => {
     const res = await request(app)
       .post("/api/auth/login")
-      .send({ email: "alice@student.university.ac.th", password: "password123" });
+      .send({ email: "alice@student.university.ac.th", password: DEMO_PASSWORD });
 
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty("id");
@@ -42,7 +43,7 @@ describe("F-01 Authentication & F-02 Authorization API Tests", () => {
   it("TEST-01-03: login with unknown email -> 401 generic (AC-01-03)", async () => {
     const res = await request(app)
       .post("/api/auth/login")
-      .send({ email: "nonexistent@university.ac.th", password: "password123" });
+      .send({ email: "nonexistent@university.ac.th", password: DEMO_PASSWORD });
 
     expect(res.status).toBe(401);
     expect(res.body.error.code).toBe("UNAUTHENTICATED");
@@ -53,7 +54,7 @@ describe("F-01 Authentication & F-02 Authorization API Tests", () => {
   it("TEST-01-04: GET /api/me with valid session cookie returns current user (AC-01-04)", async () => {
     const loginRes = await request(app)
       .post("/api/auth/login")
-      .send({ email: "alice@student.university.ac.th", password: "password123" });
+      .send({ email: "alice@student.university.ac.th", password: DEMO_PASSWORD });
 
     const cookie = loginRes.headers["set-cookie"];
 
@@ -80,7 +81,7 @@ describe("F-01 Authentication & F-02 Authorization API Tests", () => {
   it("TEST-01-06: logout clears session cookie, subsequent protected call returns 401 (AC-01-06)", async () => {
     const loginRes = await request(app)
       .post("/api/auth/login")
-      .send({ email: "alice@student.university.ac.th", password: "password123" });
+      .send({ email: "alice@student.university.ac.th", password: DEMO_PASSWORD });
 
     const cookie = loginRes.headers["set-cookie"];
 
@@ -108,7 +109,7 @@ describe("F-01 Authentication & F-02 Authorization API Tests", () => {
   it("TEST-01-07: seeded INVITED account cannot log in -> 401 (AC-01-07, BR-15)", async () => {
     const res = await request(app)
       .post("/api/auth/login")
-      .send({ email: "dave@student.university.ac.th", password: "password123" });
+      .send({ email: "dave@student.university.ac.th", password: DEMO_PASSWORD });
 
     expect(res.status).toBe(401);
     expect(res.body.error.code).toBe("UNAUTHENTICATED");

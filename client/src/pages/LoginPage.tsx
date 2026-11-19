@@ -38,11 +38,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     }
   };
 
-  const handleQuickLogin = (demoEmail: string) => {
-    setEmail(demoEmail);
-    setPassword("password123");
-  };
-
   return (
     <div style={{ maxWidth: 420, margin: "4rem auto", padding: "1.5rem" }}>
       <div className="card">
@@ -95,38 +90,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
-
-        <div style={{ marginTop: "1.5rem", borderTop: "1px solid var(--border)", paddingTop: "1rem" }}>
-          <p style={{ fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: "0.5rem" }}>
-            Demo Quick Login (Seeded Accounts):
-          </p>
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              style={{ fontSize: "0.8rem", padding: "0.3rem 0.6rem" }}
-              onClick={() => handleQuickLogin("alice@student.university.ac.th")}
-            >
-              Student: Alice (Team Alpha)
-            </button>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              style={{ fontSize: "0.8rem", padding: "0.3rem 0.6rem" }}
-              onClick={() => handleQuickLogin("prof.somchai@university.ac.th")}
-            >
-              Supervisor: Prof. Somchai (Team Alpha)
-            </button>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              style={{ fontSize: "0.8rem", padding: "0.3rem 0.6rem" }}
-              onClick={() => handleQuickLogin("charlie@student.university.ac.th")}
-            >
-              Student: Charlie (Team Beta)
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );

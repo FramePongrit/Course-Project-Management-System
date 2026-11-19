@@ -18,6 +18,7 @@ import path from "path";
 import { AddressInfo } from "net";
 import { PrismaClient } from "@prisma/client";
 import { createApp } from "../../src/app";
+import { DEMO_PASSWORD } from "../helpers/demo";
 
 const SHOT_DIR = path.join(__dirname, "../../docs/screenshots");
 
@@ -61,7 +62,7 @@ test("Capture Deliverable 1 Part F screenshots", async ({ browser }) => {
   const login = async (page: Page, email: string) => {
     await page.goto(`${baseUrl}/login`);
     await page.fill("#email", email);
-    await page.fill("#password", "password123");
+    await page.fill("#password", DEMO_PASSWORD);
   };
 
   // ================= Scenario 1: normal journey =================
