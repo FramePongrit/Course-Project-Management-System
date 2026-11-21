@@ -33,6 +33,7 @@ All placeholders are in [`.env.example`](../../../.env.example). `.env` is git-i
 | `PORT` | Listen port (default 8080) | No | `.env` / compose | Injected by Cloud Run |
 | `NODE_ENV` | `production` in the image | No | Dockerfile | Dockerfile |
 | `DEMO_USER_PASSWORD` | Password of all seeded demo accounts (Lab 6 UAT); also used by the tests | **Yes** (cloud) | `.env`; CI generates one per run | Secret Manager `s87d9c6b4-demo-password` (migration job only, with `--demo`) |
+| `SEED_DEMO_DATA` | `false` skips the demo seed (unset = seed) | No | unset | Set on the migration job by `deploy.sh` (`true` with `--demo`, else `false`) |
 | `SEED_RESET` | `true` wipes all tables before seeding | No | `.env` (local only) | **Never set** |
 | `POSTGRES_USER` / `POSTGRES_PASSWORD` / `POSTGRES_DB` | Local compose database | Password: yes | `.env` | Not used (Cloud SQL) |
 
@@ -55,9 +56,9 @@ password from the client code, were removed.
 | Health | `GET /api/health` (process up), `GET /api/ready` (database reachable, 503 otherwise) |
 
 The migration job (local `migrate` service, and the Cloud Run job `s87d9c6b4-migrate`) runs
-`npx prisma migrate deploy && npm run prisma:seed` from the same image (in the cloud the seed is
-included only when `deploy.sh --demo` configured it). Because the seed is non-destructive, it is safe
-on every release; keep migrations additive.
+`npx prisma migrate deploy && npm run prisma:seed` from the same image. In the cloud the seed only
+creates demo accounts when `deploy.sh --demo` set `SEED_DEMO_DATA=true`; otherwise it logs a skip.
+Because the seed is also non-destructive, it is safe on every release; keep migrations additive.
 
 | CI / deploy checks | Command |
 |---|---|
@@ -103,15 +104,20 @@ kit's `teardown.sh`, and ask a TA to pause or clean up.
 | Artifact Registry image | `asia-southeast1-docker.pkg.dev/cpe-se-course-2026/s87d9c6b4/s87d9c6b4:<full commit SHA>` |
 | Cloud SQL (PostgreSQL) | `s87d9c6b4-pg` |
 | Runtime service account | `s87d9c6b4-runner@cpe-se-course-2026.iam.gserviceaccount.com` |
-| Secrets | `s87d9c6b4-database-url`, `s87d9c6b4-demo-password`, `s87d9c6b4-app-secret-1` (= `JWT_SECRET`) |
+| Secrets | `s87d9c6b4-database-url`, `s87d9c6b4-demo-password`, `s87d9c6b4-admin-password` (unused by CPMS), `s87d9c6b4-app-secret-1` (= `JWT_SECRET`) |
 | GitHub environment | `demo` with variables `GCP_PROJECT_ID`, `GCP_REGION`, `WIF_PROVIDER`, `WIF_SERVICE_ACCOUNT` (set by the portal when the repo is connected) |
 
 Deploy files: `deploy/deploy.sh`, `deploy/release.sh` and `.github/workflows/deploy.yml` come from the
-portal's kit for our prefix (infrastructure steps removed by the portal). Changes for CPMS: port 8080;
-`JWT_SECRET` from slot 1; `COOKIE_SECURE=true`; the migration job runs migrate only, plus the
-non-destructive seed with `--demo`; `smoke_test.py` rewritten for CPMS (no `/api/categories`, cookie
-session instead of a token). `teardown.sh` and the kit's `test_deploy_stub.sh` (which tested
-infrastructure creation) are not used; `deploy/tests/test_deploy_stub.sh` tests the current script.
+portal's kit for our prefix (infrastructure steps removed by the portal) and are kept in the kit's
+structure. `deploy.sh` differs from the portal file in three CHANGE ME lines only: `--port 8080`,
+`JWT_SECRET=s87d9c6b4-app-secret-1:latest` added to the service secrets, and `COOKIE_SECURE=true`
+added to the service env. The migration/seed command is the kit's; CPMS adapts in the app instead
+(`prisma/seed.ts` honours `SEED_DEMO_DATA=false`). The job also mounts the kit's
+`s87d9c6b4-admin-password` secret as `ADMIN_PASSWORD`; CPMS does not read it, and the script's final
+summary still prints the kit's TokTickIT admin e-mail line, which does not apply to CPMS.
+`smoke_test.py` is rewritten for CPMS (no `/api/categories`, cookie session instead of a token).
+`teardown.sh` and the kit's `test_deploy_stub.sh` (which tested infrastructure creation) are not used;
+`deploy/tests/test_deploy_stub.sh` tests the current script.
 
 ## 6. Release procedure and finding the running commit
 
