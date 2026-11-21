@@ -12,8 +12,16 @@ const prisma = new PrismaClient();
  * - SEED_RESET=true wipes all data first. LOCAL USE ONLY; never set it in the cloud.
  * - The demo password is never hard-coded: it comes from DEMO_USER_PASSWORD
  *   (local .env, CI env, or Secret Manager in the cloud).
+ * - SEED_DEMO_DATA=false skips the demo seed entirely. The cloud migration job sets it when
+ *   deploy/deploy.sh runs without --demo (the job then has no DEMO_USER_PASSWORD).
+ *   Unset (local, CI) means seed.
  */
 async function main() {
+  if (process.env.SEED_DEMO_DATA === "false") {
+    console.log("SEED_DEMO_DATA=false; skipping demo seed.");
+    return;
+  }
+
   const demoPassword = process.env.DEMO_USER_PASSWORD;
   if (!demoPassword) {
     throw new Error("DEMO_USER_PASSWORD is required to seed demo accounts (see .env.example)");
