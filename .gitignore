@@ -39,3 +39,7 @@ prisma/*.db
 test-results/
 playwright-report/
 
+
+# Python
+__pycache__/
+*.pyc

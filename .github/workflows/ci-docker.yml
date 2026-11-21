@@ -1,0 +1,103 @@
+# CI & Docker Build (Lab 5 R-05, R-06)
+#
+# Runs on every Pull Request into `main` and into the sprint staging branches (`sprint-*`),
+# on demand, and as a reusable workflow called by deploy.yml before a release.
+# Steps: install -> typecheck -> migrate + seed (real PostgreSQL) -> Vitest -> reseed ->
+#        Playwright E2E -> production Docker image build. Nothing is deployed or pushed.
+#
+# DO NOT RENAME the job id `test-and-docker`: it is the required status check on `main`.
+# Adapted from the CPE 334 Lab 5 starter kit; actions are pinned to full commit SHAs.
+
+name: CI & Docker Build
+
+on:
+  workflow_call:
+  pull_request:
+    branches: [main, "sprint-*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-docker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    # Throw-away database for the tests only (not a real secret).
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: cpms
+          POSTGRES_PASSWORD: cpms-ci
+          POSTGRES_DB: cpms
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://cpms:cpms-ci@localhost:5432/cpms?schema=public
+      # Demo-account password for this run only: generated per run, never stored anywhere.
+      DEMO_USER_PASSWORD: ci-${{ github.run_id }}-${{ github.run_attempt }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+          cache: npm
+
+      # Guards deploy.sh / release.sh / smoke_test.py with fake gcloud: no GCP access, no cost.
+      - name: Check deployment scripts without accessing GCP
+        run: |
+          bash -n deploy/deploy.sh deploy/release.sh
+          bash deploy/tests/test_deploy_stub.sh
+          bash deploy/tests/test_release_stub.sh
+          python3 -m unittest discover -s deploy/tests -p 'test_smoke.py'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          npx prisma generate
+
+      - name: Typecheck (server, client, tests)
+        run: |
+          npx tsc -p tsconfig.server.json --noEmit
+          npx tsc -p tsconfig.json --noEmit
+
+      - name: Migrate and seed the test database
+        run: |
+          npx prisma migrate deploy
+          npm run prisma:seed
+
+      - name: Unit and API tests (Vitest + Supertest)
+        run: npm test
+
+      # The API tests change data; start the E2E journeys from a clean seed.
+      - name: Reset seed for E2E
+        env:
+          SEED_RESET: "true"
+        run: npm run prisma:seed
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: UI / E2E tests (Playwright; builds the client first)
+        run: npm run test:e2e
+
+      - name: Verify the production Docker image builds
+        run: docker build -t cpms:ci-${{ github.sha }} .

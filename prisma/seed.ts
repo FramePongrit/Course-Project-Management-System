@@ -1,21 +1,44 @@
+import "dotenv/config";
 import { PrismaClient, Role, UserStatus } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
+/**
+ * Demo seed.
+ *
+ * - Safe by default: if the database already contains users, nothing is touched. This makes the
+ *   seed safe to run on every deploy (Lab 5 migration job) without erasing real data (NFR-04).
+ * - SEED_RESET=true wipes all data first. LOCAL USE ONLY; never set it in the cloud.
+ * - The demo password is never hard-coded: it comes from DEMO_USER_PASSWORD
+ *   (local .env, CI env, or Secret Manager in the cloud).
+ */
 async function main() {
-  console.log("Seeding database...");
+  const demoPassword = process.env.DEMO_USER_PASSWORD;
+  if (!demoPassword) {
+    throw new Error("DEMO_USER_PASSWORD is required to seed demo accounts (see .env.example)");
+  }
 
-  // Clean existing data in reverse dependency order
-  await prisma.feedback.deleteMany();
-  await prisma.submission.deleteMany();
-  await prisma.milestone.deleteMany();
-  await prisma.project.deleteMany();
-  await prisma.membership.deleteMany();
-  await prisma.team.deleteMany();
-  await prisma.user.deleteMany();
+  const reset = process.env.SEED_RESET === "true";
+  if (!reset && (await prisma.user.count()) > 0) {
+    console.log("Database already contains users; skipping seed (set SEED_RESET=true to wipe locally).");
+    return;
+  }
 
-  const passwordHash = await bcrypt.hash("password123", 10);
+  console.log(reset ? "Resetting and seeding database..." : "Seeding database...");
+
+  if (reset) {
+    // Clean existing data in reverse dependency order
+    await prisma.feedback.deleteMany();
+    await prisma.submission.deleteMany();
+    await prisma.milestone.deleteMany();
+    await prisma.project.deleteMany();
+    await prisma.membership.deleteMany();
+    await prisma.team.deleteMany();
+    await prisma.user.deleteMany();
+  }
+
+  const passwordHash = await bcrypt.hash(demoPassword, 10);
 
   // 1. Supervisors
   const supervisor1 = await prisma.user.create({

@@ -3,6 +3,7 @@ import http from "http";
 import { AddressInfo } from "net";
 import { PrismaClient } from "@prisma/client";
 import { createApp } from "../../src/app";
+import { DEMO_PASSWORD } from "../helpers/demo";
 
 test.describe("Sprint 1 UI / E2E Critical Journeys", () => {
   const prisma = new PrismaClient();
@@ -52,7 +53,7 @@ test.describe("Sprint 1 UI / E2E Critical Journeys", () => {
 
     // Log in as Student Alice
     await page.fill("#email", "alice@student.university.ac.th");
-    await page.fill("#password", "password123");
+    await page.fill("#password", DEMO_PASSWORD);
     await page.click('button[type="submit"]');
 
     // Verify Student Dashboard loads with Project Progress (AC-08-01)
@@ -100,7 +101,7 @@ test.describe("Sprint 1 UI / E2E Critical Journeys", () => {
 
     // Log in as Supervisor Prof. Somchai
     await page.fill("#email", "prof.somchai@university.ac.th");
-    await page.fill("#password", "password123");
+    await page.fill("#password", DEMO_PASSWORD);
     await page.click('button[type="submit"]');
 
     // Navigate from Supervisor Projects List to Project Detail

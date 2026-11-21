@@ -1,0 +1,2 @@
+# Shell scripts run on Linux (Cloud Shell, GitHub Actions, containers): always LF.
+*.sh text eol=lf

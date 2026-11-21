@@ -3,6 +3,7 @@ import request from "supertest";
 import { PrismaClient } from "@prisma/client";
 import { createApp } from "../../src/app";
 import { FixedClock } from "../../src/lib/clock";
+import { DEMO_PASSWORD } from "../helpers/demo";
 
 describe("F-08 Project Progress API Tests (FR-21, FR-10, EX-05)", () => {
   const prisma = new PrismaClient();
@@ -20,25 +21,25 @@ describe("F-08 Project Progress API Tests (FR-21, FR-10, EX-05)", () => {
     // Alice (Team Alpha / Project 1)
     const aRes = await request(app)
       .post("/api/auth/login")
-      .send({ email: "alice@student.university.ac.th", password: "password123" });
+      .send({ email: "alice@student.university.ac.th", password: DEMO_PASSWORD });
     aliceCookie = aRes.headers["set-cookie"][0];
 
     // Charlie (Team Beta / Project 2)
     const cRes = await request(app)
       .post("/api/auth/login")
-      .send({ email: "charlie@student.university.ac.th", password: "password123" });
+      .send({ email: "charlie@student.university.ac.th", password: DEMO_PASSWORD });
     charlieCookie = cRes.headers["set-cookie"][0];
 
     // Supervisor 1 (Prof. Somchai - Team Alpha)
     const s1Res = await request(app)
       .post("/api/auth/login")
-      .send({ email: "prof.somchai@university.ac.th", password: "password123" });
+      .send({ email: "prof.somchai@university.ac.th", password: DEMO_PASSWORD });
     supervisor1Cookie = s1Res.headers["set-cookie"][0];
 
     // Supervisor 2 (Dr. Ann - Team Beta)
     const s2Res = await request(app)
       .post("/api/auth/login")
-      .send({ email: "dr.ann@university.ac.th", password: "password123" });
+      .send({ email: "dr.ann@university.ac.th", password: DEMO_PASSWORD });
     supervisor2Cookie = s2Res.headers["set-cookie"][0];
 
     const p1 = await prisma.project.findFirst({
