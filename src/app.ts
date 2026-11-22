@@ -10,7 +10,7 @@ import { errorHandler } from "./middleware/errorHandler";
 import { createAuthRouter } from "./routes/auth";
 import { createProjectsRouter } from "./routes/projects";
 import { createMilestonesRouter } from "./routes/milestones";
-import { UnauthenticatedError } from "./errors";
+import { NotFoundError, UnauthenticatedError } from "./errors";
 
 export interface AppOptions {
   prisma?: PrismaClient;
@@ -41,6 +41,8 @@ export function createApp(options: AppOptions = {}): Express {
   const cookieSecure = options.cookieSecure ?? (process.env.COOKIE_SECURE === "true");
 
   const app = express();
+  // Do not advertise the framework in every response.
+  app.disable("x-powered-by");
 
   // Cloud Run terminates TLS in front of the container.
   app.set("trust proxy", 1);
@@ -94,6 +96,12 @@ export function createApp(options: AppOptions = {}): Express {
       res.sendFile(path.join(publicDir, "index.html"));
     });
   }
+
+  // Unknown API routes answer with the same JSON error shape as the rest of the API,
+  // instead of Express's default HTML 404 page.
+  app.use("/api", (_req: Request, _res: Response, next: NextFunction) => {
+    next(new NotFoundError("API route not found"));
+  });
 
   // Error handling middleware
   app.use(errorHandler);

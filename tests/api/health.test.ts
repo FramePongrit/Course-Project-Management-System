@@ -25,6 +25,18 @@ describe("Operational endpoints and production configuration guards", () => {
     expect(res.status).toBe(503);
   });
 
+  it("unknown /api route -> 404 JSON error, not an HTML page", async () => {
+    const res = await request(app).get("/api/does-not-exist");
+    expect(res.status).toBe(404);
+    expect(res.headers["content-type"]).toMatch(/application\/json/);
+    expect(res.body).toEqual({ error: { code: "NOT_FOUND", message: "API route not found" } });
+  });
+
+  it("responses do not advertise the framework (no X-Powered-By header)", async () => {
+    const res = await request(app).get("/api/health");
+    expect(res.headers["x-powered-by"]).toBeUndefined();
+  });
+
   it("resolveJwtSecret rejects a missing, default or example secret in production", () => {
     expect(() => resolveJwtSecret(undefined, { NODE_ENV: "production" })).toThrow();
     expect(() => resolveJwtSecret(undefined, { NODE_ENV: "production", JWT_SECRET: "default-secret-key-cpms" })).toThrow();
