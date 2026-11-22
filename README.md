@@ -101,4 +101,9 @@ Open `http://localhost:8080`. Data is kept in the `postgres_data` volume across
 
 ## Release
 
-Sprint 1 target: `v1.0.0-sprint1` on `main`. Docker/CI-CD/GCP deployment is established in Lab 5.
+Sprint 1 target: `v1.0.0-sprint1` on `main`.
+
+Since Lab 5 every merge into `main` is a release: the `main-protection` ruleset requires a reviewed PR and
+the `test-and-docker` CI check, and the *Deploy demo* workflow deploys to Google Cloud Run.
+Live: https://s87d9c6b4-4d7hbszvwq-as.a.run.app. Release procedure, environment variables and GCP resources:
+[docs/labs/lab-05/deployment.md](docs/labs/lab-05/deployment.md).
