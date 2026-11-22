@@ -141,7 +141,7 @@ export const SupervisorMilestoneDetail: React.FC = () => {
                   rel="noopener noreferrer"
                   style={{ wordBreak: "break-all" }}
                 >
-                  {milestone.submission.link} &nearr;
+                  {milestone.submission.link} {"↗"}
                 </a>
               </p>
             </div>
