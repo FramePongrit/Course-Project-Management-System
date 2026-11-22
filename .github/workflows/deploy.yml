@@ -130,8 +130,10 @@ jobs:
           WIF_PROVIDER: ${{ vars.WIF_PROVIDER }}
           WIF_SERVICE_ACCOUNT: ${{ vars.WIF_SERVICE_ACCOUNT }}
         run: |
-          test -n "$PROJECT_ID" && test -n "$REGION"
-          test -n "$WIF_PROVIDER" && test -n "$WIF_SERVICE_ACCOUNT"
+          # Each check fails the step on its own (a failing `a && b` list does not stop `bash -e`).
+          for name in PROJECT_ID REGION WIF_PROVIDER WIF_SERVICE_ACCOUNT; do
+            [ -n "${!name}" ] || { echo "Missing GitHub environment variable for $name (Settings > Environments > demo)."; exit 1; }
+          done
           [[ "$IMAGE_TAG" =~ ^[0-9a-f]{40}$ ]] || { echo 'Image tag must be a full 40-character commit SHA.'; exit 1; }
 
       # ------------------------------------------------------------------------
