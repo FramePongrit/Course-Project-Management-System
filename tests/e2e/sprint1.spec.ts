@@ -120,6 +120,13 @@ test.describe("Sprint 1 UI / E2E Critical Journeys", () => {
     // Verify Student Submission is visible read-only
     await expect(page.getByText("E2E Verified Submission v1")).toBeVisible();
 
+    // Artifact link ends with a real arrow, never a raw HTML entity (Issue #25)
+    const artifactLink = page.locator('a[target="_blank"]', {
+      hasText: "https://github.com/FramePongrit/Course-Project-Management-System",
+    });
+    await expect(artifactLink).toContainText("↗");
+    await expect(page.locator("body")).not.toContainText("&nearr;");
+
     // Record Feedback (AC-06-01)
     const feedbackComment =
       "E2E Supervisor Feedback: Verified end-to-end submission workflow.";
