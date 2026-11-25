@@ -55,7 +55,7 @@ dashboard.
 - Cleanup: none needed. Sprint 1 has no delete feature by design (BR-07, BR-08); milestones created with
   a run tag are left as test data and do not affect other cases.
 - **Sequence:** UAT-01 → UAT-04 must run in that order with the same `<RUN>` (UAT-04 continues
-  UAT-01's milestone). UAT-02, UAT-03 and UAT-05 are independent and can run any time.
+  UAT-01's milestone). UAT-02, UAT-03, UAT-05 and UAT-06 are independent and can run any time.
 
 ## 4. Case summary
 
@@ -66,6 +66,7 @@ dashboard.
 | UAT-03 | Forbidden role / ownership | AC-02-02, AC-02-04, AC-08-04 | SUP-B, STU-B1, STU-A1, SUP-A |
 | UAT-04 | State / history / persistence | AC-05-02, AC-06-01, AC-06-07, AC-07-04, AC-05-10 (BR-20) | STU-A2, SUP-A, STU-A1 |
 | UAT-05 | Business rule (cutoff) | AC-05-03 (BR-01), AC-07-05, AC-06-03 (BR-05) | STU-A1, SUP-A |
+| UAT-06 | Invalid input (boundary) | AC-05-04 (NFR-08) | SUP-A, STU-A1 |
 
 ## 5. Cases
 
@@ -153,6 +154,25 @@ dashboard.
 | 3 | Logout, sign in as **SUP-A**, open the project, open "Sprint 0 Proposal" | Message "This milestone has passed its deadline with no submission (Missed)."; no way to record feedback |
 | 4 | Back to the project page | "Sprint 0 Proposal" still **Missed** |
 
+### UAT-06 — Submission rejects a blank title and a non-http(s) link (invalid input)
+
+- **Purpose:** a submission with an empty title or a non-web link is rejected and nothing is saved.
+- **Preconditions:** none.
+- **Inputs:** milestone `UAT <RUN> Input`, deadline = 3 days from today 17:00; link A =
+  `https://github.com/example/input-<RUN>`; link B = `ftp://example.com/input-<RUN>`.
+- **Known defect:** on revision `s87d9c6b4-00008-8lw` step 3 is expected to FAIL — see Issue #34
+  (found by the Product Team). Please run it and record the actual result; it will be re-tested on the
+  corrected release.
+
+| # | Action | Expected result |
+|---|--------|-----------------|
+| 1 | Sign in as **SUP-A**, open "Course Project Management System", create milestone `UAT <RUN> Input` | Created, status **Open** |
+| 2 | Logout, sign in as **STU-A1**, open `UAT <RUN> Input`, leave Submission Title **empty**, link A, click **Submit Work** | The browser blocks the form ("Please fill out this field"); nothing is sent |
+| 3 | Type **three spaces** as the title, link A, click **Submit Work** | A red error message is shown; the heading stays "Submit Milestone Work" |
+| 4 | Title `UAT <RUN> Input`, link B, click **Submit Work** | Rejected: the browser or a red error message refuses the link; nothing saved |
+| 5 | Reload the page, then open the dashboard | No current submission; `UAT <RUN> Input` still **Open** |
+| 6 | Title `UAT <RUN> Input`, link A, click **Submit Work** | Saved; "Current Submission" shows the title; status **Submitted** |
+
 ## 6. Product Team dry run (not the independent UAT)
 
 Before handoff our team ran every case above on the release in §1 (revision `s87d9c6b4-00008-8lw`) with
@@ -161,8 +181,17 @@ Result: all 32 steps behaved as expected (two steps were first flagged by a scri
 confirmed correct from their screenshots `UAT-01-s03.png` and `UAT-02-s04.png`). The dry run found one problem in this document (the first UAT-03 draft
 needed an existing Team Beta milestone, but Team Beta had none) and UAT-03 was rewritten to create its own
 data. Screenshots: `docs/labs/lab-06/evidence/dry-run/`. This is our own check, not the independent UAT.
-Data left by it: milestones `UAT DRY1 Demo` (Completed), `UAT DRY1 Rule` (Open), `UAT DRY1 Beta`
-(Submitted). Do not reuse the run tag `DRY1`.
+The dry run of UAT-01 to UAT-05 found no defect.
+
+**Defect found after the dry run.** On 2026-11-26, while reviewing the validation code, our team found
+that a whitespace-only submission title is accepted and saved as an empty title, which violates AC-05-04.
+It was confirmed on the live app (revision `s87d9c6b4-00008-8lw`) and reported as **Issue #34**
+(Major). UAT-06 was added to cover invalid input. Evidence: `docs/labs/lab-06/evidence/defect-blank-title/`.
+This finding was made by the Product Team, not by the independent UAT team.
+
+Data left by our checks: milestones `UAT DRY1 Demo` (Completed), `UAT DRY1 Beta` (Submitted) and
+`UAT DRY1 Rule` (Submitted, with the empty-title submission from Issue #34). Do not reuse the run tag
+`DRY1`.
 
 ## 7. How to report a finding
 
