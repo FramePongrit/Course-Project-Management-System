@@ -1,0 +1,128 @@
+[
+  {
+    "cas": "UAT-01",
+    "step": 1,
+    "expected": "projects page lists CPMS",
+    "result": "PASS",
+    "actual": "projects=[\"Course Project Management System\"]",
+    "file": "UAT-01-s01.png",
+    "at": "2026-11-25T15:40:55.590Z"
+  },
+  {
+    "cas": "UAT-01",
+    "step": 2,
+    "expected": "milestone table + Create Milestone form",
+    "result": "PASS",
+    "actual": "project page shown",
+    "file": "UAT-01-s02.png",
+    "at": "2026-11-25T15:40:57.795Z"
+  },
+  {
+    "cas": "UAT-01",
+    "step": 3,
+    "expected": "success msg, row Open",
+    "result": "FAIL",
+    "actual": "msg=true status=null deadlineInput=2026-11-28T17:00",
+    "file": "UAT-01-s03.png",
+    "at": "2026-11-25T15:41:00.137Z"
+  },
+  {
+    "cas": "UAT-01",
+    "step": 4,
+    "expected": "dashboard lists Demo as Open, no %",
+    "result": "PASS",
+    "actual": "status=Open percentFound=false",
+    "file": "UAT-01-s04.png",
+    "at": "2026-11-25T15:41:02.721Z"
+  },
+  {
+    "cas": "UAT-01",
+    "step": 5,
+    "expected": "Submit Milestone Work form",
+    "result": "PASS",
+    "actual": "Course Project Management System (CPMS) Alice WongSTUDENT Logout ← Back to Dashboard UAT DRY1 Demo Deadline: 28 Nov 2026, 17:00 (ICT) Open UAT milestone Submit ",
+    "file": "UAT-01-s05.png",
+    "at": "2026-11-25T15:41:03.441Z"
+  },
+  {
+    "cas": "UAT-01",
+    "step": 6,
+    "expected": "Current Submission + Update button",
+    "result": "PASS",
+    "actual": "currentSubmission=true updateBtn=true",
+    "file": "UAT-01-s06.png",
+    "at": "2026-11-25T15:41:05.700Z"
+  },
+  {
+    "cas": "UAT-01",
+    "step": 7,
+    "expected": "values persist after reload",
+    "result": "PASS",
+    "actual": "title=\"UAT DRY1 Work\" link=\"https://github.com/example/uat-DRY1\"",
+    "file": "UAT-01-s07.png",
+    "at": "2026-11-25T15:41:07.208Z"
+  },
+  {
+    "cas": "UAT-01",
+    "step": 8,
+    "expected": "status Submitted",
+    "result": "PASS",
+    "actual": "status=Submitted",
+    "file": "UAT-01-s08.png",
+    "at": "2026-11-25T15:41:08.728Z"
+  },
+  {
+    "cas": "UAT-02",
+    "step": 1,
+    "expected": "project page",
+    "result": "PASS",
+    "actual": "project page shown",
+    "file": "UAT-02-s01.png",
+    "at": "2026-11-25T15:41:12.886Z"
+  },
+  {
+    "cas": "UAT-02",
+    "step": 2,
+    "expected": "future-deadline error, no row",
+    "result": "PASS",
+    "actual": "error=true row=null input=2026-11-24T09:00",
+    "file": "UAT-02-s02.png",
+    "at": "2026-11-25T15:41:15.185Z"
+  },
+  {
+    "cas": "UAT-02",
+    "step": 3,
+    "expected": "still no row",
+    "result": "PASS",
+    "actual": "rows=0",
+    "file": "UAT-02-s03.png",
+    "at": "2026-11-25T15:41:16.713Z"
+  },
+  {
+    "cas": "UAT-02",
+    "step": 4,
+    "expected": "success, one Open row",
+    "result": "FAIL",
+    "actual": "msg=true status=null",
+    "file": "UAT-02-s04.png",
+    "at": "2026-11-25T15:41:18.983Z"
+  },
+  {
+    "cas": "UAT-02",
+    "step": 5,
+    "expected": "duplicate-name error",
+    "result": "PASS",
+    "actual": "error=true",
+    "file": "UAT-02-s05.png",
+    "at": "2026-11-25T15:41:21.255Z"
+  },
+  {
+    "cas": "UAT-02",
+    "step": 6,
+    "expected": "exactly one row",
+    "result": "PASS",
+    "actual": "rows=1",
+    "file": "UAT-02-s06.png",
+    "at": "2026-11-25T15:41:22.786Z"
+  }
+]

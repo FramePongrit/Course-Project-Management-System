@@ -1,0 +1,164 @@
+[
+  {
+    "cas": "UAT-03",
+    "step": 1,
+    "expected": "SUP-B sees only Smart Campus Transit; Beta milestone Open",
+    "result": "PASS",
+    "actual": "projects=[\"Smart Campus Transit\"] status=Open",
+    "file": "UAT-03-s01.png",
+    "at": "2026-11-25T15:43:06.855Z"
+  },
+  {
+    "cas": "UAT-03",
+    "step": 2,
+    "expected": "Charlie submission saved",
+    "result": "PASS",
+    "actual": "url=https://s87d9c6b4-4d7hbszvwq-as.a.run.app/milestones/cmwwam08v0007s601uhy66dhq",
+    "file": "UAT-03-s02.png",
+    "at": "2026-11-25T15:43:11.553Z"
+  },
+  {
+    "cas": "UAT-03",
+    "step": 3,
+    "expected": "Milestone not found, no Beta data",
+    "result": "PASS",
+    "actual": "notFound=true betaNameShown=false betaWorkShown=false",
+    "file": "UAT-03-s03.png",
+    "at": "2026-11-25T15:43:14.948Z"
+  },
+  {
+    "cas": "UAT-03",
+    "step": 4,
+    "expected": "Alice dashboard does not list Beta milestone",
+    "result": "PASS",
+    "actual": "betaListed=false",
+    "file": "UAT-03-s04.png",
+    "at": "2026-11-25T15:43:16.479Z"
+  },
+  {
+    "cas": "UAT-03",
+    "step": 5,
+    "expected": "Alpha project page",
+    "result": "PASS",
+    "actual": "url=https://s87d9c6b4-4d7hbszvwq-as.a.run.app/projects/cmwraym6b000hs62beyiorxwk",
+    "file": "UAT-03-s05.png",
+    "at": "2026-11-25T15:43:20.506Z"
+  },
+  {
+    "cas": "UAT-03",
+    "step": 6,
+    "expected": "Project not found",
+    "result": "PASS",
+    "actual": "notFound=true alphaMilestoneShown=false",
+    "file": "UAT-03-s06.png",
+    "at": "2026-11-25T15:43:23.688Z"
+  },
+  {
+    "cas": "UAT-03",
+    "step": 7,
+    "expected": "Beta submission unchanged, Submitted",
+    "result": "PASS",
+    "actual": "title=\"UAT DRY1 Beta Work\" status=Submitted",
+    "file": "UAT-03-s07.png",
+    "at": "2026-11-25T15:43:28.394Z"
+  },
+  {
+    "cas": "UAT-04",
+    "step": 1,
+    "expected": "shows Alice's submission",
+    "result": "PASS",
+    "actual": "title=\"UAT DRY1 Work\"",
+    "file": "UAT-04-s01.png",
+    "at": "2026-11-25T15:43:31.205Z"
+  },
+  {
+    "cas": "UAT-04",
+    "step": 2,
+    "expected": "title v2, still Submitted",
+    "result": "PASS",
+    "actual": "title=\"UAT DRY1 Work v2\" status=Submitted",
+    "file": "UAT-04-s02.png",
+    "at": "2026-11-25T15:43:34.978Z"
+  },
+  {
+    "cas": "UAT-04",
+    "step": 3,
+    "expected": "supervisor sees v2 + link",
+    "result": "PASS",
+    "actual": "v2=true link=true",
+    "file": "UAT-04-s03.png",
+    "at": "2026-11-25T15:43:39.587Z"
+  },
+  {
+    "cas": "UAT-04",
+    "step": 4,
+    "expected": "feedback shown, form gone",
+    "result": "PASS",
+    "actual": "recordedAt=true formPresent=false",
+    "file": "UAT-04-s04.png",
+    "at": "2026-11-25T15:43:41.852Z"
+  },
+  {
+    "cas": "UAT-04",
+    "step": 5,
+    "expected": "Completed",
+    "result": "PASS",
+    "actual": "status=Completed",
+    "file": "UAT-04-s05.png",
+    "at": "2026-11-25T15:43:44.055Z"
+  },
+  {
+    "cas": "UAT-04",
+    "step": 6,
+    "expected": "feedback visible, frozen, no button",
+    "result": "PASS",
+    "actual": "feedback=true frozenMsg=true buttons=0 titleDisabled=true",
+    "file": "UAT-04-s06.png",
+    "at": "2026-11-25T15:43:46.594Z"
+  },
+  {
+    "cas": "UAT-04",
+    "step": 7,
+    "expected": "still Completed, title v2",
+    "result": "PASS",
+    "actual": "status=Completed title=\"UAT DRY1 Work v2\"",
+    "file": "UAT-04-s07.png",
+    "at": "2026-11-25T15:43:49.786Z"
+  },
+  {
+    "cas": "UAT-05",
+    "step": 1,
+    "expected": "Sprint 0 Proposal Missed",
+    "result": "PASS",
+    "actual": "status=Missed",
+    "file": "UAT-05-s01.png",
+    "at": "2026-11-25T15:43:52.558Z"
+  },
+  {
+    "cas": "UAT-05",
+    "step": 2,
+    "expected": "cutoff msg, disabled, no button",
+    "result": "PASS",
+    "actual": "cutoffMsg=true buttons=0 titleDisabled=true",
+    "file": "UAT-05-s02.png",
+    "at": "2026-11-25T15:43:53.291Z"
+  },
+  {
+    "cas": "UAT-05",
+    "step": 3,
+    "expected": "Missed msg, no feedback form",
+    "result": "PASS",
+    "actual": "missedMsg=true feedbackForm=false",
+    "file": "UAT-05-s03.png",
+    "at": "2026-11-25T15:43:57.732Z"
+  },
+  {
+    "cas": "UAT-05",
+    "step": 4,
+    "expected": "still Missed",
+    "result": "PASS",
+    "actual": "status=Missed",
+    "file": "UAT-05-s04.png",
+    "at": "2026-11-25T15:43:59.837Z"
+  }
+]
