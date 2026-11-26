@@ -58,11 +58,18 @@ describe("F-05 Submission API Tests (BR-01, BR-02, BR-07, BR-20, NFR-08, NFR-10)
     });
     testMilestoneId = m.id;
 
-    // Past deadline milestone (Sprint 0 Proposal from seed)
-    const mPast = await prisma.milestone.findFirst({
-      where: { name: "Sprint 0 Proposal", projectId: project1!.id },
+    // Past-deadline milestone relative to the fixed clock (2026-11-08). Created here rather than taken
+    // from the seed, whose deadlines move with the real date (#35).
+    const mPast = await prisma.milestone.create({
+      data: {
+        projectId: project1!.id,
+        name: `Past Deadline MS ${Date.now()}`,
+        description: "Deadline before the fixed clock",
+        deadline: new Date("2026-11-01T12:00:00.000Z"),
+        createdById: (await prisma.user.findFirst({ where: { email: "prof.somchai@university.ac.th" } }))!.id,
+      },
     });
-    pastMilestoneId = mPast!.id;
+    pastMilestoneId = mPast.id;
 
     // Milestone with Feedback already recorded (Sprint 1 Working Increment from seed)
     const mCompleted = await prisma.milestone.findFirst({

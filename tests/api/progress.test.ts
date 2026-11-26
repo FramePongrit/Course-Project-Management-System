@@ -51,6 +51,18 @@ describe("F-08 Project Progress API Tests (FR-21, FR-10, EX-05)", () => {
       where: { name: "Smart Campus Transit" },
     });
     project2Id = p2!.id;
+
+    // A milestone that is Missed under the fixed clock (deadline before 2026-11-08, no submission).
+    // Created here because seeded deadlines move with the real date (#35).
+    await prisma.milestone.create({
+      data: {
+        projectId: project1Id,
+        name: `Missed Fixture MS ${Date.now()}`,
+        description: "Deadline before the fixed clock, no submission",
+        deadline: new Date("2026-11-01T12:00:00.000Z"),
+        createdById: (await prisma.user.findFirst({ where: { email: "prof.somchai@university.ac.th" } }))!.id,
+      },
+    });
   });
 
   // TEST-08-01
@@ -67,7 +79,7 @@ describe("F-08 Project Progress API Tests (FR-21, FR-10, EX-05)", () => {
 
     // Check statuses in seeded milestones
     const statuses = res.body.milestones.map((m: any) => m.status);
-    expect(statuses).toContain("Missed"); // Sprint 0 Proposal
+    expect(statuses).toContain("Missed"); // Missed Fixture MS (created in beforeAll)
     expect(statuses).toContain("Completed"); // Sprint 1 Working Increment
   });
 
