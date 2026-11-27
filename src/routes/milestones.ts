@@ -20,7 +20,8 @@ const submissionSchema = z.object({
   link: z
     .string()
     .url()
-    .refine((val) => val.startsWith("http://") || val.startsWith("https://"), {
+    // URL schemes are case-insensitive: compare the parsed (lower-case) protocol, not the raw prefix (#41).
+    .refine((val) => URL.canParse(val) && ["http:", "https:"].includes(new URL(val).protocol), {
       message: "Link must be an http or https URL",
     }),
 });
