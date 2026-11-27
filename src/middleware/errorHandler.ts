@@ -18,6 +18,16 @@ export function errorHandler(
     });
   }
 
+  // A request body that is not valid JSON is invalid client input, not a server failure (NFR-08, #40).
+  if (err?.type === "entity.parse.failed") {
+    return res.status(422).json({
+      error: {
+        code: "VALIDATION",
+        message: "Request body is not valid JSON",
+      },
+    });
+  }
+
   if (err instanceof ZodError) {
     const message = err.errors.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ");
     return res.status(422).json({
