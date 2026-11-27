@@ -22,6 +22,9 @@ body {
   background-color: var(--background);
   color: var(--text-main);
   line-height: 1.5;
+  /* Long words without spaces (allowed names, titles, descriptions, links) wrap instead of
+     widening the page; inherited by all text, including table cells (#42). */
+  overflow-wrap: anywhere;
 }
 
 a {
