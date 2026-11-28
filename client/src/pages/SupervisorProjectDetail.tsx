@@ -115,11 +115,11 @@ export const SupervisorProjectDetail: React.FC = () => {
       <div className="card">
         <div className="card-header">
           <div>
-            <h1 className="title">{project.name}</h1>
+            <h1 className="title user-text">{project.name}</h1>
             <p className="subtitle">Supervising Team: {project.teamName}</p>
           </div>
         </div>
-        <p>{project.description}</p>
+        <p className="user-text">{project.description}</p>
       </div>
 
       {/* Create Milestone Card */}
@@ -196,6 +196,7 @@ export const SupervisorProjectDetail: React.FC = () => {
         {milestones.length === 0 ? (
           <p className="subtitle">No milestones yet. Create one using the form above.</p>
         ) : (
+          <div className="table-scroll">
           <table className="table">
             <thead>
               <tr>
@@ -208,7 +209,7 @@ export const SupervisorProjectDetail: React.FC = () => {
             <tbody>
               {milestones.map((m) => (
                 <tr key={m.id}>
-                  <td>
+                  <td className="user-text">
                     <strong>{m.name}</strong>
                     <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
                       {m.description}
@@ -231,6 +232,7 @@ export const SupervisorProjectDetail: React.FC = () => {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
     </div>

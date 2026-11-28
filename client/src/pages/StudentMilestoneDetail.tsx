@@ -108,14 +108,14 @@ export const StudentMilestoneDetail: React.FC = () => {
       <div className="card">
         <div className="card-header">
           <div>
-            <h1 className="title">{milestone.name}</h1>
+            <h1 className="title user-text">{milestone.name}</h1>
             <p className="subtitle">Deadline: {formatICT(milestone.deadline)}</p>
           </div>
           <div>
             <StatusBadge status={milestone.status} />
           </div>
         </div>
-        <p>{milestone.description}</p>
+        <p className="user-text">{milestone.description}</p>
       </div>
 
       {milestone.feedback && (
@@ -123,7 +123,7 @@ export const StudentMilestoneDetail: React.FC = () => {
           <h2 style={{ fontSize: "1.15rem", fontWeight: 700, color: "var(--success)", marginBottom: "0.5rem" }}>
             Supervisor Feedback
           </h2>
-          <p style={{ whiteSpace: "pre-wrap", marginBottom: "0.75rem" }}>{milestone.feedback.text}</p>
+          <p className="user-text" style={{ whiteSpace: "pre-wrap", marginBottom: "0.75rem" }}>{milestone.feedback.text}</p>
           <div style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>
             Recorded at: {formatICT(milestone.feedback.recordedAt)}
           </div>

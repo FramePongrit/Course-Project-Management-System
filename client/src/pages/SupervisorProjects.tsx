@@ -57,14 +57,14 @@ export const SupervisorProjects: React.FC = () => {
             <div key={p.id} className="card" style={{ marginBottom: 0 }}>
               <div className="card-header">
                 <div>
-                  <h2 style={{ fontSize: "1.25rem", fontWeight: 700 }}>{p.name}</h2>
+                  <h2 className="user-text" style={{ fontSize: "1.25rem", fontWeight: 700 }}>{p.name}</h2>
                   <p className="subtitle">Team: {p.teamName}</p>
                 </div>
                 <Link to={`/projects/${p.id}`} className="btn btn-primary" style={{ fontSize: "0.85rem" }}>
                   View Project &rarr;
                 </Link>
               </div>
-              <p style={{ color: "var(--text-muted)", fontSize: "0.95rem" }}>{p.description}</p>
+              <p className="user-text" style={{ color: "var(--text-muted)", fontSize: "0.95rem" }}>{p.description}</p>
             </div>
           ))}
         </div>
