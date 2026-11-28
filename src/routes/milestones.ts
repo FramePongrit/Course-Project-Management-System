@@ -14,18 +14,20 @@ import { deriveStatus } from "../services/status";
 import { isBeforeCutoff } from "../services/rules";
 
 const submissionSchema = z.object({
-  title: z.string().min(1).max(200),
+  // Trim before the length check so a title of only spaces is rejected (AC-05-04, #34).
+  title: z.string().trim().min(1).max(200),
   description: z.string().max(2000).default(""),
   link: z
     .string()
     .url()
-    .refine((val) => val.startsWith("http://") || val.startsWith("https://"), {
+    // URL schemes are case-insensitive: compare the parsed (lower-case) protocol, not the raw prefix (#41).
+    .refine((val) => URL.canParse(val) && ["http:", "https:"].includes(new URL(val).protocol), {
       message: "Link must be an http or https URL",
     }),
 });
 
 const feedbackSchema = z.object({
-  text: z.string().min(1).max(4000),
+  text: z.string().trim().min(1).max(4000),
 });
 
 export function createMilestonesRouter(prisma: PrismaClient, clock: Clock) {
