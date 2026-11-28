@@ -13,6 +13,7 @@ test our Sprint 1 release without a verbal explanation.
 | Deployed Cloud Run revision | `s87d9c6b4-00008-8lw` (Deploy demo run 45005139438, 2026-11-22 15:57 ICT, image `2174e0f…` @ `sha256:c28ef11d0445…`) |
 | URL | https://s87d9c6b4-4d7hbszvwq-as.a.run.app |
 | Browser | Any current Chrome / Edge / Firefox; times are shown in ICT (UTC+7) |
+| **Corrected release for retest** | `main` @ `fd2ff1d` (release PR #44, 2026-11-28), Cloud Run revision **`s87d9c6b4-00009-bwv`** (Deploy demo run 46105362817, image `sha256:d9995a83b064…`) — fixes #34, #38–#42; same URL. The final Sprint 1 decision is recorded on this revision. |
 
 **Difference from the baseline tag.** Commits after `v1.0.0-sprint1` are Lab 5 delivery work only:
 cloud configuration, Docker, CI, deployment docs (#8–#15), a UI fix for the artifact-link arrow (#25)
@@ -67,6 +68,27 @@ dashboard.
 | UAT-04 | State / history / persistence | AC-05-02, AC-06-01, AC-06-07, AC-07-04, AC-05-10 (BR-20) | STU-A2, SUP-A, STU-A1 |
 | UAT-05 | Business rule (cutoff) | AC-05-03 (BR-01), AC-07-05, AC-06-03 (BR-05) | STU-A1, SUP-A |
 | UAT-06 | Invalid input (boundary) | AC-05-04 (NFR-08) | SUP-A, STU-A1 |
+| YW-EX-01 | Auth negative flows (agreed, proposed by UAT team) | AC-01-02..06, AC-02-01 | STU-A1, anonymous |
+| YW-EX-02 | Role restrictions, forged identity (agreed) | AC-02-03, AC-02-05, AC-02-06, AC-04-04, AC-05-07, AC-06-05 | STU-A1, SUP-A |
+| YW-EX-03 | Cross-team writes and API isolation (agreed) | AC-02-02, AC-04-05, AC-05-06, AC-06-06, AC-06-07, AC-08-04 | SUP-B, STU-A1 |
+| YW-EX-04 | Server-side cutoff, freeze, immutability, duplicate feedback (agreed) | AC-04-06, AC-05-03, AC-05-08, AC-05-10, AC-06-03, AC-06-04, AC-07-06 | SUP-A, STU-A1 |
+| YW-EX-05 | Audit fields, feedback binding, progress schema (agreed) | AC-05-01, AC-05-02, AC-06-08, AC-08-03 | STU-A1, SUP-A |
+| YW-EX-06 | Awaiting Feedback status, server-side link/length validation (agreed) | AC-05-04, AC-07-03 | STU-A1, SUP-A |
+
+### Additional agreed cases from the UAT team's coverage review
+
+The partner UAT team (YaWan) compared UAT-01..06 with all 50 Sprint 1 acceptance criteria and proposed
+six additional cases, mostly server-side checks behind disabled UI controls (BR-17). The Product Team
+**accepted all six as agreed cases** on 2026-11-28. Their full steps and expected results are in the
+UAT team's document, pinned to the reviewed version:
+https://github.com/SANOP19/cpe334-p8-habit-tracker/blob/9f123d1/docs/labs/lab-06/coverage-review-pt.md (§3)
+
+- The UAT team ran them on revision `s87d9c6b4-00008-8lw` (26 Nov) and found no defect.
+- On the corrected revision `s87d9c6b4-00009-bwv`, please re-run at least **YW-EX-02 step 4** and
+  **YW-EX-06 step 3**, which exercise the submission validation changed by #34 and #41; re-running all
+  six is welcome.
+- Rules from that document apply: never modify the seeded "Sprint 1 Architecture" milestone or another
+  team's real data; use your own run tag.
 
 ## 5. Cases
 
@@ -162,7 +184,8 @@ dashboard.
   `https://github.com/example/input-<RUN>`; link B = `ftp://example.com/input-<RUN>`.
 - **Known defect:** on revision `s87d9c6b4-00008-8lw` step 3 is expected to FAIL — see Issue #34
   (found by the Product Team). Please run it and record the actual result; it will be re-tested on the
-  corrected release.
+  corrected release. **Update 2026-11-28:** fixed in `s87d9c6b4-00009-bwv`, where all six steps are
+  expected to pass.
 
 | # | Action | Expected result |
 |---|--------|-----------------|
@@ -190,8 +213,9 @@ It was confirmed on the live app (revision `s87d9c6b4-00008-8lw`) and reported a
 This finding was made by the Product Team, not by the independent UAT team.
 
 Data left by our checks: milestones `UAT DRY1 Demo` (Completed), `UAT DRY1 Beta` (Submitted) and
-`UAT DRY1 Rule` (Submitted, with the empty-title submission from Issue #34). Do not reuse the run tag
-`DRY1`.
+`UAT DRY1 Rule` (Submitted; its title was empty after the #34 check and was overwritten with
+"Post-deploy HTTPS check" during the post-deploy check of `s87d9c6b4-00009-bwv` on 2026-11-28).
+Do not reuse the run tag `DRY1`.
 
 ## 7. How to report a finding
 
@@ -199,3 +223,17 @@ Open a GitHub Issue in the repository above (title starts with the case ID, e.g.
 tested version/revision, case ID + step, preconditions, steps, expected, actual, severity
 (Critical / Major / Minor) with the user impact, and a screenshot. Then tell us in the team chat.
 We will notify you **before** deploying any change and give you the new revision for retest.
+
+## 8. Findings received and their status
+
+| Issue | Found by | Severity | Disposition | Fix PR | Deployed in |
+|-------|----------|----------|-------------|--------|-------------|
+| #34 whitespace-only submission title | Product Team | Major | Accepted defect, fixed | #37 | `s87d9c6b4-00009-bwv` |
+| #38 whitespace-only milestone name | UAT team (YaWan) | Major | Accepted defect, fixed | #37 | `s87d9c6b4-00009-bwv` |
+| #39 whitespace-only feedback via API | UAT team (YaWan) | Major | Accepted defect, fixed | #37 | `s87d9c6b4-00009-bwv` |
+| #40 malformed JSON → 500 | UAT team (YaWan) | Minor | Accepted defect, fixed | #43 | `s87d9c6b4-00009-bwv` |
+| #41 upper-case `HTTPS://` link rejected | UAT team (YaWan) | Minor | Accepted defect, fixed | #43 | `s87d9c6b4-00009-bwv` |
+| #42 long unbroken text widens the page | UAT team (YaWan) | Minor | Accepted defect, fixed | #43 | `s87d9c6b4-00009-bwv` |
+
+Triage reasons are in the comment on each Issue. Retest requests with steps were posted on each Issue on
+2026-11-28; the UAT team records the retest results and the final Sprint 1 decision there.
