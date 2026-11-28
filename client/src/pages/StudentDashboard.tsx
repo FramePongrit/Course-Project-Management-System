@@ -80,11 +80,11 @@ export const StudentDashboard: React.FC<{ user: User }> = ({ user }) => {
       <div className="card">
         <div className="card-header">
           <div>
-            <h1 className="title">{project.name}</h1>
+            <h1 className="title user-text">{project.name}</h1>
             <p className="subtitle">Team: {project.teamName}</p>
           </div>
         </div>
-        <p>{project.description}</p>
+        <p className="user-text">{project.description}</p>
       </div>
 
       <div className="card">
@@ -95,6 +95,7 @@ export const StudentDashboard: React.FC<{ user: User }> = ({ user }) => {
         {milestones.length === 0 ? (
           <p className="subtitle">No milestones created for this project yet.</p>
         ) : (
+          <div className="table-scroll">
           <table className="table">
             <thead>
               <tr>
@@ -107,7 +108,7 @@ export const StudentDashboard: React.FC<{ user: User }> = ({ user }) => {
             <tbody>
               {milestones.map((m) => (
                 <tr key={m.id}>
-                  <td>
+                  <td className="user-text">
                     <strong>{m.name}</strong>
                     <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
                       {m.description}
@@ -130,6 +131,7 @@ export const StudentDashboard: React.FC<{ user: User }> = ({ user }) => {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
     </div>

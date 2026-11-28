@@ -22,9 +22,19 @@ body {
   background-color: var(--background);
   color: var(--text-main);
   line-height: 1.5;
-  /* Long words without spaces (allowed names, titles, descriptions, links) wrap instead of
-     widening the page; inherited by all text, including table cells (#42). */
+}
+
+/* User-entered text (names, titles, descriptions, feedback) may contain long words without spaces,
+   so it may break inside a word instead of widening the page (#42). Applied only to those elements:
+   on body it also split short UI words such as "Logout" or "Submitted" (#45). */
+.user-text {
   overflow-wrap: anywhere;
+}
+
+/* In a table, overflow-wrap: anywhere lets the cell shrink to one letter wide; keep the name column
+   wide enough that ordinary words stay whole, and let the table scroll on narrow screens (#45). */
+.table td.user-text {
+  min-width: 10rem;
 }
 
 a {
@@ -261,6 +271,18 @@ a:hover {
   padding: 0.75rem 1rem;
   text-align: left;
   border-bottom: 1px solid var(--border);
+}
+
+/* On narrow screens a table whose words stay whole may be wider than the screen: it scrolls inside
+   its card instead of widening the page (#42, #45). */
+.table-scroll {
+  overflow-x: auto;
+}
+
+@media (max-width: 480px) {
+  .table th, .table td {
+    padding: 0.5rem 0.5rem;
+  }
 }
 
 .table th {
