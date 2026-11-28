@@ -88,4 +88,54 @@ test.describe("#42 long unbroken text stays within the page width", () => {
     const w = await pageWidth(page);
     expect(w.scroll).toBeLessThanOrEqual(w.client);
   });
+
+  // ---- #45: the #42 correction must not split short UI words in the middle ----
+
+  // Words (runs of non-space characters) inside the matched elements that are laid out over more than one line.
+  async function splitWords(page: Page, selector: string) {
+    return page.evaluate((sel) => {
+      const split: string[] = [];
+      for (const el of Array.from(document.querySelectorAll(sel))) {
+        const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+          const text = node.textContent || "";
+          for (const m of text.matchAll(/\S+/g)) {
+            const range = document.createRange();
+            range.setStart(node, m.index!);
+            range.setEnd(node, m.index! + m[0].length);
+            const tops = new Set(Array.from(range.getClientRects()).filter((r) => r.width > 0).map((r) => Math.round(r.top)));
+            if (tops.size > 1) split.push(m[0]);
+          }
+        }
+      }
+      return split;
+    }, selector);
+  }
+
+  // Short UI text that must stay whole: header, role badge, status badges, action buttons, deadline cells.
+  const UI_TEXT = ".navbar-brand, .user-menu, .status-badge, td .btn, tbody td:nth-child(2)";
+
+  for (const width of [375, 1280]) {
+    test(`TEST-45-01 (${width}px): student dashboard with a long-name row keeps short UI words whole`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 });
+      await login(page, "alice@student.university.ac.th");
+      await expect(page.locator("tr", { hasText: milestoneName.slice(0, 20) })).toBeVisible();
+
+      expect(await splitWords(page, UI_TEXT)).toEqual([]);
+      const w = await pageWidth(page);
+      expect(w.scroll).toBeLessThanOrEqual(w.client); // #42 still holds
+    });
+
+    test(`TEST-45-02 (${width}px): supervisor project page with a long-name row keeps short UI words whole`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 });
+      await login(page, "prof.somchai@university.ac.th");
+      await page.waitForURL(`${baseUrl}/projects`);
+      await page.getByRole("link", { name: /View Project/ }).first().click();
+      await expect(page.locator("tr", { hasText: milestoneName.slice(0, 20) })).toBeVisible();
+
+      expect(await splitWords(page, UI_TEXT)).toEqual([]);
+      const w = await pageWidth(page);
+      expect(w.scroll).toBeLessThanOrEqual(w.client); // #42 still holds
+    });
+  }
 });
