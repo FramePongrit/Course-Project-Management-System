@@ -16,7 +16,7 @@
     "prisma:seed": "tsx prisma/seed.ts",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "npm run build:client && playwright test tests/e2e/sprint1.spec.ts",
+    "test:e2e": "npm run build:client && playwright test tests/e2e/sprint1.spec.ts tests/e2e/layout.spec.ts",
     "screenshots": "npm run build:client && playwright test tests/e2e/screenshots.spec.ts"
   },
   "dependencies": {
