@@ -98,14 +98,14 @@ export const SupervisorMilestoneDetail: React.FC = () => {
       <div className="card">
         <div className="card-header">
           <div>
-            <h1 className="title">{milestone.name}</h1>
+            <h1 className="title user-text">{milestone.name}</h1>
             <p className="subtitle">Deadline: {formatICT(milestone.deadline)}</p>
           </div>
           <div>
             <StatusBadge status={milestone.status} />
           </div>
         </div>
-        <p>{milestone.description}</p>
+        <p className="user-text">{milestone.description}</p>
       </div>
 
       {/* Student Submission (Read-only for Supervisor) */}
@@ -124,12 +124,12 @@ export const SupervisorMilestoneDetail: React.FC = () => {
           <div>
             <div style={{ marginBottom: "0.75rem" }}>
               <span className="form-label">Submission Title:</span>
-              <p style={{ fontSize: "1.05rem", fontWeight: 600 }}>{milestone.submission.title}</p>
+              <p className="user-text" style={{ fontSize: "1.05rem", fontWeight: 600 }}>{milestone.submission.title}</p>
             </div>
 
             <div style={{ marginBottom: "0.75rem" }}>
               <span className="form-label">Description:</span>
-              <p style={{ whiteSpace: "pre-wrap" }}>{milestone.submission.description || "(No description provided)"}</p>
+              <p className="user-text" style={{ whiteSpace: "pre-wrap" }}>{milestone.submission.description || "(No description provided)"}</p>
             </div>
 
             <div style={{ marginBottom: "0.75rem" }}>
@@ -167,7 +167,7 @@ export const SupervisorMilestoneDetail: React.FC = () => {
             <div className="alert alert-success" style={{ marginBottom: "0.75rem" }}>
               Feedback is immutable and has been recorded. The submission is now frozen (BR-20).
             </div>
-            <p style={{ whiteSpace: "pre-wrap", fontSize: "1rem" }}>{milestone.feedback.text}</p>
+            <p className="user-text" style={{ whiteSpace: "pre-wrap", fontSize: "1rem" }}>{milestone.feedback.text}</p>
             <div style={{ fontSize: "0.8rem", color: "var(--text-muted)", marginTop: "0.75rem" }}>
               Recorded at: {formatICT(milestone.feedback.recordedAt)}
             </div>

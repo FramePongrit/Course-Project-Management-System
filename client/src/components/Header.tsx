@@ -31,7 +31,7 @@ export const Header: React.FC<HeaderProps> = ({ user, onLogout }) => {
       {user && (
         <div className="user-menu">
           <div>
-            <span style={{ fontWeight: 600, marginRight: "0.5rem" }}>{user.name}</span>
+            <span className="user-text" style={{ fontWeight: 600, marginRight: "0.5rem" }}>{user.name}</span>
             <span className={`role-badge ${user.role.toLowerCase()}`}>{user.role}</span>
           </div>
           <button onClick={handleLogout} className="btn btn-outline" style={{ padding: "0.35rem 0.75rem", fontSize: "0.85rem" }}>
