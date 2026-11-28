@@ -7,7 +7,7 @@ import { deriveStatus } from "../services/status";
 import { isFutureDeadline } from "../services/rules";
 
 const createMilestoneSchema = z.object({
-  name: z.string().min(1).max(200),
+  name: z.string().trim().min(1).max(200),
   description: z.string().max(2000).default(""),
   deadline: z.string().refine((val) => !isNaN(Date.parse(val)), {
     message: "Invalid date format for deadline",
